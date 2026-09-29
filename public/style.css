@@ -1,0 +1,142 @@
+.chatbot-gif {
+  height: 60px;
+  vertical-align: sub;
+}
+
+#chatContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+textarea {
+    resize: none;
+}
+
+.textarea-wrapper {
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+}
+
+.file-label {
+    position: absolute;
+    left: 10px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#uploadIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+#fileName {
+    font-size: 14px;
+    color: #333;
+}
+
+.think-label {
+    position: absolute;
+    right: 55px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.think-label > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+#thinkingIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+#thinkText {
+    font-size: 14px;
+    color: #333;
+}
+
+#thinkCheck {
+    margin: 0;
+    cursor: pointer;
+}
+
+.thinking-gif {
+    width: 18px;
+    height: 18px;
+    vertical-align: text-bottom;
+}
+
+.thinking {
+    display: none;
+}
+
+.submit-button {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.submit-button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.submit-button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.user-bubble {
+    display: none;
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    margin: 0;
+    border-radius: 18px 18px 4px 18px;
+    max-width: 70%;
+    width: fit-content;
+    line-height: 1.5;
+}
+
+.assistant-bubble {
+    display: none;
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    color: #222;
+    padding: 10px 15px;
+    margin: 0;
+    border-radius: 18px 18px 18px 4px;
+    max-width: 70%;
+    width: fit-content;
+    line-height: 1.5;
+}

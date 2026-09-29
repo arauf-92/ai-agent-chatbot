@@ -1,0 +1,40 @@
+{
+  "name": "ai-agent-chatbot",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "eval": "tsx src/evals/run-evals.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0",
+    "@arizeai/openinference-instrumentation-anthropic": "^0.2.8",
+    "@langfuse/otel": "^5.11.1",
+    "@langfuse/tracing": "^5.11.1",
+    "@opentelemetry/sdk-node": "^0.222.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "langfuse": "^3.39.2",
+    "mammoth": "^1.12.3",
+    "marked": "^18.0.14",
+    "multer": "^2.3.0",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.23.0"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^26.2.0",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}

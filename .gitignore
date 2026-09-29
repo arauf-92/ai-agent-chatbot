@@ -1,0 +1,8 @@
+# NodeJS
+node_modules
+
+# OS & IDEs
+.vscode
+dist/
+package-lock.json
+*.log
