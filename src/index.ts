@@ -38,9 +38,9 @@ function addMessage(role: 'user' | 'assistant', text: Anthropic.MessageParam['co
 function extractText(response: Anthropic.Message): string | null {
   const thinkingBlock = response.content.find(block => block.type === 'thinking');
   console.log("Thinking block present:", !!thinkingBlock);
-  if (thinkingBlock?.type === 'thinking') {
-    console.log("Thinking content:", thinkingBlock.thinking.slice(0, 200));
-  }
+  // if (thinkingBlock?.type === 'thinking') {
+  //   console.log("Thinking content:", thinkingBlock.thinking.slice(0, 200));
+  // }
 
   const textBlock = response.content.find(block => block.type === 'text');
   return textBlock?.type === 'text' ? textBlock.text : null;
