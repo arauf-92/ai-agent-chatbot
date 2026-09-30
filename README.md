@@ -145,3 +145,4 @@ npm start
 - Duplicate-ingestion detection is based on a hash of the full document text; re-uploading a modified version of a previously ingested document will be treated as new content, not an update.
 - File type routing is based on file extension rather than MIME type, since MIME type detection proved unreliable for `.docx` uploads across browsers/OS.
 - Multiple simultaneous file uploads are not supported; one file per request.
+- Conversation state is currently shared across all sessions. Per-session isolation using cookies is planned but not yet implemented.
