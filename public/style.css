@@ -1,6 +1,7 @@
+/* Desktop */
 .chatbot-gif {
-  height: 60px;
-  vertical-align: sub;
+    height: 60px;
+    vertical-align: sub;
 }
 
 #chatContainer {
@@ -20,6 +21,10 @@ textarea {
 
 .input-container {
     position: relative;
+}
+
+#userInput {
+    height: 220px;
 }
 
 .file-label {
@@ -55,7 +60,7 @@ textarea {
     z-index: 2;
 }
 
-.think-label > span {
+.think-label>span {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -91,7 +96,7 @@ textarea {
 .submit-button {
     position: absolute;
     right: 12px;
-    bottom: 10px;
+    bottom: 9px;
     width: 32px;
     height: 32px;
     padding: 0;
@@ -116,7 +121,6 @@ textarea {
 }
 
 .user-bubble {
-    display: none;
     align-self: flex-end;
     background-color: #007bff;
     color: white;
@@ -129,7 +133,6 @@ textarea {
 }
 
 .assistant-bubble {
-    display: none;
     align-self: flex-start;
     background-color: #f1f1f1;
     color: #222;
@@ -139,4 +142,68 @@ textarea {
     max-width: 70%;
     width: fit-content;
     line-height: 1.5;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    #userInput {
+        height: 160px;
+        padding-bottom: 45px;
+    }
+
+    .container {
+        margin-top: 1.5rem !important;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    #greetingHeading {
+        font-size: 1.5rem;
+    }
+
+    #chatContainer {
+        gap: 10px;
+    }
+
+    .user-bubble,
+    .assistant-bubble {
+        max-width: 90%;
+    }
+
+    .file-label {
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .think-label {
+        right: 50px;
+        bottom: 10px;
+    }
+
+    #thinkText {
+        font-size: 13px;
+    }
+
+    #thinkingIcon,
+    #uploadIcon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .submit-button {
+        right: 8px;
+        bottom: 6px;
+    }
+
+    .submit-button img {
+        width: 22px;
+        height: 22px;
+    }
+
+    #fileName {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
