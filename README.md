@@ -72,6 +72,7 @@ All Claude API calls funnel through a single function, `sendMessageToClaude` (`s
 │   ├── index.html
 │   ├── chat.js
 │   └── style.css
+├── .env
 ├── package.json
 └── tsconfig.json
 ```
