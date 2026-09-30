@@ -162,6 +162,7 @@ app.post("/submit", upload.single("file"), async (req, res) => {
         fileContents = file.buffer.toString("utf8");
       }
 
+      // RAG or direct paste decision
       if (shouldUseRAG(fileContents)) {
         console.log(`Large file (${fileContents.length} chars) — using RAG`);
         try {
@@ -181,6 +182,7 @@ app.post("/submit", upload.single("file"), async (req, res) => {
       }
     }
 
+    // no file — normal chat
     const reply = await getResponse(userText, think);
     if (reply) {
       res.json({ reply: marked.parse(reply), userQ: userText });
