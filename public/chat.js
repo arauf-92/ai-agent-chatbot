@@ -41,13 +41,31 @@ fileAttachment.addEventListener("change", function () {
     }
 });
 
-function addBubble(role, htmlContent) {
+function addBubble(role, htmlContent, imageUrl = null) {
     const bubble = document.createElement("p");
     bubble.className = role === 'user' ? 'user-bubble' : 'assistant-bubble';
     bubble.innerHTML = htmlContent;
-    bubble.style.display = 'block';
+
+    if (imageUrl) {
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = "Generated image";
+        img.className = "generated-image";
+        img.addEventListener("click", () => openLightbox(imageUrl));
+        bubble.appendChild(img);
+    }
+
+    // bubble.style.display = 'block';
     chatContainer.insertBefore(bubble, thinking);
     bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function openLightbox(imageUrl) {
+    const overlay = document.createElement("div");
+    overlay.className = "lightbox-overlay";
+    overlay.innerHTML = `<img src="${imageUrl}" class="lightbox-image" alt="Enlarged image">`;
+    overlay.addEventListener("click", () => overlay.remove());
+    document.body.appendChild(overlay);
 }
 
 submitButton.addEventListener("click", async () => {
@@ -78,7 +96,7 @@ submitButton.addEventListener("click", async () => {
             throw new Error(`Server error: ${response.status}`);
         }
         const result = await response.json();
-        addBubble('assistant', result.reply || "Error: " + result.error);
+        addBubble('assistant', result.reply || "Error: " + result.error, result.img);
     } catch (err) {
         addBubble('assistant', "Request failed: " + err.message);
     } finally {

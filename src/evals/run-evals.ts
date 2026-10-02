@@ -23,6 +23,7 @@ const toolSet: ToolCase[] = [
     { question: "What's the weather in Karachi?", expectedTool: "get_weather", expectedBehavior: "Should call weather tool with city=Karachi" },
     { question: "What's the latest news on AI regulation?", expectedTool: "web_search", expectedBehavior: "Should call web_search, not answer from training data" },
     { question: "My favourite sports is Football", expectedTool: "save_memory", expectedBehavior: "Should call save_memory, because it's a fact" },
+    { question: "Generate an image of our solar system", expectedTool: "generate_image", expectedBehavior: "Should call generate_image, to generate an image" },
     { question: "What is 2+2?", expectedTool: null, expectedBehavior: "Should answer directly, no tool needed" }
 ];
 

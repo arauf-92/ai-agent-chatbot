@@ -144,6 +144,34 @@ textarea {
     line-height: 1.5;
 }
 
+.generated-image {
+    display: block;
+    max-width: 100%;
+    width: 320px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-top: 8px;
+    cursor: zoom-in;
+}
+
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: zoom-out;
+}
+
+.lightbox-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+}
+
 /* Mobile */
 @media (max-width: 576px) {
     #userInput {

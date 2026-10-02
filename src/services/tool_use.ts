@@ -1,6 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
 import 'dotenv/config';
 import { pool } from '../db/pool.js';
+import Replicate from "replicate";
+
+const replicateConfig: { auth?: string } = {};
+if (process.env.REPLICATE_API_TOKEN !== undefined) {
+    replicateConfig.auth = process.env.REPLICATE_API_TOKEN;
+}
+const replicate = new Replicate(replicateConfig);
 
 async function get_weather(city: string): Promise<string> {
     try {
@@ -75,6 +82,24 @@ async function saveMemory(fact: string): Promise<string> {
         return "Sorry, I couldn't save that.";
     }
 }
+interface FileOutput {
+    url(): URL;
+}
+
+async function generateImage(prompt: string): Promise<string> {
+    try {
+        const output = await replicate.run(
+            "black-forest-labs/flux-1.1-pro-ultra",
+            { input: { prompt } }
+        ) as FileOutput;
+
+        const imageUrl = output.url().toString();
+        return imageUrl;
+    } catch (error) {
+        console.error("Image generation error:", (error as Error).message);
+        return "";
+    }
+}
 
 const tools: Anthropic.Tool[] = [
     {
@@ -108,7 +133,18 @@ const tools: Anthropic.Tool[] = [
             properties: { fact: { type: "string", description: "The fact to remember" } },
             required: ["fact"]
         }
+    },
+    {
+        name: "generate_image",
+        description: "Generate an image from a text description. Use this when the user asks to create, draw, or generate a picture or image.",
+        input_schema: {
+            type: "object",
+            properties: {
+                prompt: { type: "string", description: "A detailed description of the image to generate." }
+            },
+            required: ["prompt"]
+        }
     }
 ];
 
-export { get_weather, performWebSearch, getSystemPrompt, saveMemory, tools };
+export { get_weather, performWebSearch, getSystemPrompt, saveMemory, generateImage, tools };

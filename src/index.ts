@@ -12,7 +12,7 @@ import mammoth from 'mammoth';
 import { marked } from "marked";
 
 import { sendMessageToClaude } from './services/claude.js';
-import { get_weather, performWebSearch, getSystemPrompt, saveMemory, tools } from './services/tool_use.js';
+import { get_weather, performWebSearch, getSystemPrompt, saveMemory, generateImage, tools } from './services/tool_use.js';
 import { shouldUseRAG, ingestDocument, answerWithRAG } from './services/rag.js';
 
 const app = express();
@@ -46,7 +46,7 @@ function extractText(response: Anthropic.Message): string | null {
   return textBlock?.type === 'text' ? textBlock.text : null;
 }
 
-async function getResponse(text: string | null, think: boolean): Promise<string | null> {
+async function getResponse(text: string | null, think: boolean): Promise<{ reply: string | null; imageUrl: string | null }> {
   return startActiveObservation("chat-turn", async (span) => {
     span.update({ input: { text, think } });
 
@@ -54,6 +54,7 @@ async function getResponse(text: string | null, think: boolean): Promise<string 
       addMessage('user', text);
     }
     const systemPrompt = await getSystemPrompt();
+    let imageUrl: string | null = null;
     try {
       let response = await sendMessageToClaude(systemPrompt, tools, messages, think);
 
@@ -76,6 +77,10 @@ async function getResponse(text: string | null, think: boolean): Promise<string 
             case 'save_memory':
               result = await saveMemory((block.input as { fact: string }).fact);
               break;
+            case 'generate_image':
+              result = await generateImage((block.input as { prompt: string }).prompt);
+              imageUrl = result;
+              break;
             default:
               result = "Unknown tool requested";
           }
@@ -90,11 +95,11 @@ async function getResponse(text: string | null, think: boolean): Promise<string 
       if (!replyText) {
         console.error("No text block found in response:", response.content);
         span.update({ output: "No text block found" });
-        return null;
+        return { reply: null, imageUrl };
       }
       addMessage('assistant', replyText);
       span.update({ output: replyText });
-      return replyText;
+      return { reply: replyText, imageUrl };
 
     } catch (error) {
       if (error instanceof RateLimitError) {
@@ -104,12 +109,12 @@ async function getResponse(text: string | null, think: boolean): Promise<string 
       } else {
         console.error("Unexpected error: ", (error as Error).message);
       }
-      return null;
+      return { reply: null, imageUrl: null };
     }
   });
 }
 
-async function imageUpload(file: Express.Multer.File, userText: string, think: boolean): Promise<string | null> {
+async function imageUpload(file: Express.Multer.File, userText: string, think: boolean): Promise<{ reply: string | null; imageUrl: string | null }> {
   const base64Image = file.buffer.toString('base64');
   addMessage('user', [
     {
@@ -128,8 +133,8 @@ async function imageUpload(file: Express.Multer.File, userText: string, think: b
   return getResponse(null, think);
 }
 
-function sendReply(res: any, reply: string | null, userText: string): void {
-  res.json({ reply: reply ? marked.parse(reply) : null, userQ: userText });
+function sendReply(res: any, reply: string | null, userText: string, imageUrl: string | null = null): void {
+    res.json({ reply: reply ? marked.parse(reply) : null, userQ: userText, img: imageUrl });
 }
 
 function sanitizeText(text: string): string {
@@ -156,8 +161,8 @@ app.post("/submit", upload.single("file"), async (req, res) => {
         const result = await mammoth.extractRawText({ buffer: file.buffer });
         fileContents = sanitizeText(result.value);
       } else if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-        const imgContent = await imageUpload(file, userText, think);
-        return sendReply(res, imgContent, userText);
+        const { reply: imgContent, imageUrl } = await imageUpload(file, userText, think);
+        return sendReply(res, imgContent, userText, imageUrl);
       } else {
         fileContents = file.buffer.toString("utf8");
       }
@@ -168,8 +173,8 @@ app.post("/submit", upload.single("file"), async (req, res) => {
         try {
           await ingestDocument(fileContents, file.originalname);
           const ansPrompt = await answerWithRAG(userText);
-          const ragAnswer = await getResponse(ansPrompt, think);
-          return sendReply(res, ragAnswer, userText);
+          const { reply: ragAnswer, imageUrl } = await getResponse(ansPrompt, think);
+          return sendReply(res, ragAnswer, userText, imageUrl);
         } catch (err) {
           console.error("Ingestion failed:", (err as Error).message);
           return res.status(500).json({ error: "Failed to process this document. It may contain unsupported characters or formatting." });
@@ -177,15 +182,15 @@ app.post("/submit", upload.single("file"), async (req, res) => {
       } else {
         console.log(`Small file (${fileContents.length} chars) — using direct paste`);
         const combinedText = `${userText}\n\nHere is the attached file content:\n${fileContents}`;
-        const reply = await getResponse(combinedText, think);
-        return sendReply(res, reply, userText);
+        const { reply, imageUrl } = await getResponse(combinedText, think);
+        return sendReply(res, reply, userText, imageUrl);
       }
     }
 
     // no file — normal chat
-    const reply = await getResponse(userText, think);
+    const { reply, imageUrl } = await getResponse(userText, think);
     if (reply) {
-      res.json({ reply: marked.parse(reply), userQ: userText });
+      sendReply(res, reply, userText, imageUrl);
     } else {
       res.status(500).json({ error: "Something went wrong" });
     }
