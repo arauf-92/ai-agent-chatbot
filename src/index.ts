@@ -78,8 +78,11 @@ async function getResponse(text: string | null, think: boolean): Promise<{ reply
               result = await saveMemory((block.input as { fact: string }).fact);
               break;
             case 'generate_image':
-              result = await generateImage((block.input as { prompt: string }).prompt);
-              imageUrl = result;
+              const imgUrl = await generateImage((block.input as { prompt: string }).prompt);
+              imageUrl = imgUrl;
+              result = imgUrl
+                ? "Image generated successfully. It will be shown to the user in the interface — do not include the image URL or markdown image syntax in your response."
+                : "Image generation failed.";
               break;
             default:
               result = "Unknown tool requested";
@@ -134,7 +137,7 @@ async function imageUpload(file: Express.Multer.File, userText: string, think: b
 }
 
 function sendReply(res: any, reply: string | null, userText: string, imageUrl: string | null = null): void {
-    res.json({ reply: reply ? marked.parse(reply) : null, userQ: userText, img: imageUrl });
+  res.json({ reply: reply ? marked.parse(reply) : null, userQ: userText, img: imageUrl });
 }
 
 function sanitizeText(text: string): string {
